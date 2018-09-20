@@ -1,0 +1,28 @@
+{
+  "name": "http-api-assignment-ii",
+  "version": "1.0.0",
+  "engines": {
+    "node": "8.11.4",
+    "npm": "5.6.0"
+  },
+  "description": "The completed HTTP API 2 assignment for IGME 430",
+  "main": "./src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Michael-A-Berger/http-api-assignment-ii.git"
+  },
+  "author": "Michael Berger",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Michael-A-Berger/http-api-assignment-ii/issues"
+  },
+  "homepage": "https://github.com/Michael-A-Berger/http-api-assignment-ii#readme",
+  "devDependencies": {
+    "eslint": "^5.6.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  }
+}
