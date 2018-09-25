@@ -3,10 +3,113 @@
 <head>
   <title>Our simple HTTP server</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
-  
+  <meta charset='UTF-8'>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
-
+    window.onload = () => {
+      //Getting the page elements
+      let responseBox = document.getElementById('content');
+      
+      //Getting the form elements
+      let addForm = document.getElementById('nameForm');
+      let addName = document.getElementById('nameField');
+      let addAge = document.getElementById('ageField');
+      let getForm = document.getElementById('userForm');
+      let getUrl = document.getElementById('urlField');
+      let getMethod = document.getElementById('methodSelect');
+      
+      //Defining the response header
+      const responseHeader = (statusCode) => {
+        switch(statusCode)
+        {
+          case 200:
+            responseBox.innerHTML = '<h1>Success</h1>';
+            break;
+          case 201:
+            responseBox.innerHTML = '<h1>Create</h1>';
+            break;
+          case 204:
+            responseBox.innerHTML = '<h1>Updated (No Content)</h1>';
+            break;
+          case 400:
+            responseBox.innerHTML = '<h1>Bad Request</h1>';
+            break;
+          case 404:
+            responseBox.innerHTML = '<h1>Resource Not Found</h1>';
+            break;
+          default:
+            console.log(`ERROR: status code ${statusCode} was returned`);
+            break;
+        }
+      };
+      
+      //Defining the submit methods of both forms
+      const addUser = (e) => {
+        //Creating the XHR
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/addUser');
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader ('Accept', 'application/json');
+        xhr.onload = () => {
+          if (xhr.readyState === 4) {
+            responseHeader(xhr.status);
+            
+            let parsedJSON = {};
+            if (xhr.response)
+            {
+              parsedJSON = JSON.parse(xhr.response);
+              console.dir(parsedJSON);
+            }
+            
+            if (parsedJSON.message)
+              responseBox.innerHTML += "<p>Message: " + parsedJSON.message + "</p>";
+          }
+        };
+        const newUser = `name=${addName.value}&age=${addAge.value}`;
+        xhr.send(newUser);
+        
+        //Preventing browser default actions (auto-sending form + change page)
+        e.preventDefault();
+        return false;
+      };
+      const getUsers = (e) => {
+        //Defining the HTTP Method to use
+        let httpMethod = 'GET';
+        if (getMethod.value === 'head')
+          httpMethod = 'HEAD';
+        
+        //Creating the XHR
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4) {
+            responseHeader(xhr.status);
+            
+            let parsedJSON = {};
+            if (xhr.response)
+            {
+              parsedJSON = JSON.parse(xhr.response);
+              console.dir(parsedJSON);
+            }
+            
+            if (parsedJSON.message)
+              responseBox.innerHTML += "<p>Message: " + parsedJSON.message + "</p>";
+            
+            if (parsedJSON.users)
+              responseBox.innerHTML += "<p>" + JSON.stringify(parsedJSON.users) + "</p>";
+          }
+        };
+        xhr.open(httpMethod, getUrl.value, true);
+        xhr.send();
+        
+        //Preventing browser default actions (auto-sending form + change page)
+        e.preventDefault();
+        return false;
+      };
+      
+      //Adding the submit methods to the forms
+      getForm.addEventListener('submit', getUsers);
+      addForm.addEventListener('submit', addUser);
+    };
   </script>
 </head>
 <body>
